@@ -209,6 +209,7 @@ def xgb_train_pipeline(
     project='{{kfp-project-id}}',
     diagnostic_mode='HALT_ON_ERROR',
     rounds=5,
+    dataproc_ctrl_sa='{{ctrl-plane-sa}}'
 ):
     output_template = str(output) + '/' + dsl.RUN_ID_PLACEHOLDER + '/data'
     region='us-central1'
@@ -250,6 +251,13 @@ def xgb_train_pipeline(
               os.path.join(_PYSRC_PREFIX,
                            'initialization_actions.sh'),
             ],
+            cluster={
+                'config': {
+                    'gceClusterConfig': {
+                        'serviceAccount': dataproc_ctrl_sa
+                    }
+                }
+            },
             image_version='1.2'
         ).after(_diagnose_me_op)
 
